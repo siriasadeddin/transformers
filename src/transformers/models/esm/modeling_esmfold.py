@@ -1037,7 +1037,8 @@ class EsmFoldSelfAttention(nn.Module):
         # Do not attend to padding tokens.
         if mask is not None:
             mask = mask[:, None, None]
-            a = a.masked_fill(mask == False, -np.inf)  # noqa: E712
+            #mask==False
+            a = a.masked_fill(~mask.bool(), -np.inf)  # noqa: E712
 
         a = nn.functional.softmax(a, dim=-1)
 
@@ -1328,7 +1329,7 @@ class EsmFoldRelativePosition(nn.Module):
 
         if mask is not None:
             mask = mask[:, None, :] * mask[:, :, None]
-            diff[mask == False] = 0  # noqa: E712
+            diff[~mask.bool()] = 0  # noqa: E712
 
         output = self.embedding(diff)
         return output
